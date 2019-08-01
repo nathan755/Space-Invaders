@@ -1,11 +1,7 @@
 import pygame
-from images import ship
-from images import enemys 
-from images import bonus
+from images import ship, enemys, bonus, laser
 
 WINDOW = pygame.display.set_mode((800,600))
-
-
 clock = pygame.time.Clock()
 BLACK = 0, 0, 0
 GREEN = 78, 255, 87
@@ -43,7 +39,6 @@ class Enemy:
         
     def draw(self):
         game.win.blit(self.img,(self.x, self.y))
-        
 
 
 class Block:
@@ -53,6 +48,18 @@ class Block:
     def draw(self):
         pygame.draw.rect(game.win, GREEN, (self.rect))
 
+
+class Projectile:
+    def __init__(self,x, y):
+        self.x = x
+        self.y = y
+        self.w = 5
+        self.h = 5
+        self.img = laser
+        self.velocity = 10
+
+    def draw(self):
+        game.win.blit(self.img,(self.x, self.y))
 
 
 class SpaceInvaders:
@@ -65,13 +72,12 @@ class SpaceInvaders:
         self.block4 = Block(600,410,100,50)
         self.enemys =[]
         self.move_event = pygame.USEREVENT + 1
-        self.left = False 
-        self.right = True
         self.velocity = 10
+        self.lasers = []
+        self.shootloop = 0 
 
     def create_enemys(self):
         x = 153
-
         for _ in range(11):
             self.enemys.append(Enemy(x, 100, "enemy1"))
             x += 45
@@ -95,63 +101,36 @@ class SpaceInvaders:
     def redraw(self):
         pygame.Surface.fill(self.win,(BLACK))
         self.ship.draw()
-        
         self.block1.draw()
         self.block2.draw()
         self.block3.draw()
         self.block4.draw()
         for enemy in self.enemys:
             enemy.draw()
+        for laser in self.lasers:
+            laser.draw()
 
     def move_enemys(self):
-      
         for enemy in self.enemys:
             if enemy.x > 700:
-                #self.right = False
-                #self.left = False
                 self.velocity = -15
-
-        
+                for enemy in self.enemys:
+                    enemy.y += 3
             elif enemy.x < 100:
-                #self.right == True
-                #self.left == False
                 self.velocity = 15
-
+                for enemy in self.enemys:
+                    enemy.y += 3
         for enemy in self.enemys:
             enemy.x += self.velocity
-    
-
-    
-
-           
-            
-
-
-    
-            
-           
-                
-
-
 
     def main_loop(self):
         self.create_enemys()
         pygame.time.set_timer(self.move_event, 1000)
+
         while True:
-            
             clock.tick(60)
             self.ship.move()
             self.redraw()
-            
-            
-            
-            
-
-            
-           
-        
-            
-
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -159,7 +138,23 @@ class SpaceInvaders:
                     quit()
                 if event.type == self.move_event:
                     self.move_enemys()
-                    print("move ships sideways")
+                    
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                if len(self.lasers) < 5 and self.shootloop == 0:
+                    self.lasers.append(Projectile(self.ship.x + 23, self.ship.y))
+
+
+            self.shootloop += 1
+            if self.shootloop > 3:
+                self.shootloop = 0
+            for laser in self.lasers:
+
+                if laser.y > 0:
+                    laser.y -= laser.velocity
+                else:
+                    self.lasers.pop(self.lasers.index(laser))
                
             pygame.display.update()
 
@@ -167,4 +162,3 @@ game = SpaceInvaders()
 game.main_loop()
 
 
-#use for loop for each type of enemy and += x 
