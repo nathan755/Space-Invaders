@@ -57,8 +57,8 @@ class Projectile:
     def __init__(self,x, y):
         self.x = x
         self.y = y
-        self.w = 5
-        self.h = 5
+        self.w = 1
+        self.h = 1
         self.img = laser
         self.velocity = 10
 
@@ -107,27 +107,14 @@ class SpaceInvaders:
     def create_blocks(self, x, y, num, block):
         count = 0
         for i in range(num):
-            self.blocks.append(Block(x, y, 5, 5))
-            x += 5 
+            self.blocks.append(Block(x, y, 10, 10))
+            x += 10 
             count += 1
-            if count == 20:
-                y += 5
+            if count == 10:
+                y += 10
                 x = block[0]
                 count = 0
-                
-
-
-                
-
-                    
-            
-                
-
-
-            
-            
-
-
+    
     def redraw(self):
         pygame.Surface.fill(self.win,(BLACK))
         self.ship.draw()
@@ -156,35 +143,21 @@ class SpaceInvaders:
     
         for laser in self.lasers:
             for block in self.blocks:
-                if laser.x > block.x and laser.x< block.x + block.w and laser.y > block.y and laser.y < block.y + block.h:
-                    self.lasers.pop(self.lasers.index(laser))
+                if laser.x > block.x and laser.x < block.x + block.w and laser.y == block.y:
                     self.blocks.pop(self.blocks.index(block))
-                    
-                    
-                      
-                    print("test")
-            
-          
+                    self.lasers.pop(self.lasers.index(laser))
+
             for enemy in self.enemys:
                 if laser.x > enemy.x and laser.x < enemy.x + enemy.w and laser.y > enemy.y and laser.y < enemy.y + enemy.h:
-                    print("hit")
-                    
                     self.lasers.pop(self.lasers.index(laser))
                     self.enemys.pop(self.enemys.index(enemy))
 
-            
-           
-                    
-                
-                                 
-                
-
     def main_loop(self):
         self.create_enemys()
-        self.create_blocks(100,410,200,self.block1)
-        self.create_blocks(275,410,200,self.block2)
-        self.create_blocks(425,410,200,self.block3)
-        self.create_blocks(600,410,200,self.block4)
+        self.create_blocks(100,410,50,self.block1)
+        self.create_blocks(275,410,50,self.block2)
+        self.create_blocks(425,410,50,self.block3)
+        self.create_blocks(600,410,50,self.block4)
         pygame.time.set_timer(self.move_event, 1000)
 
         while True:
@@ -193,22 +166,18 @@ class SpaceInvaders:
             self.collision_check()
             self.redraw()
 
-            
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
                 if event.type == self.move_event:
                     self.move_enemys()
-                    
-
+            
             keys = pygame.key.get_pressed()
             if keys[pygame.K_SPACE]:
                 if len(self.lasers) < 5 and self.shootloop == 0: 
                     self.lasers.append(Projectile(self.ship.x + 23, self.ship.y))
-
-
+            
             self.shootloop += 1
             if self.shootloop > 3:
                 self.shootloop = 0            
@@ -218,8 +187,7 @@ class SpaceInvaders:
                     laser.y -= laser.velocity
                 else:
                     self.lasers.pop(self.lasers.index(laser))
-            for item in self.lasers:
-                print(item.w )
+          
 
                
             pygame.display.update()
