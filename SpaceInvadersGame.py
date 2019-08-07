@@ -1,12 +1,11 @@
 import pygame
-from images import ship, enemys, bonus, laser
-
+from images import ship, enemys, bonus, laser, small_ship
+pygame.init()
 WINDOW = pygame.display.set_mode((800,600))
 clock = pygame.time.Clock()
 BLACK = 0, 0, 0
 GREEN = 78, 255, 87
-left = False
-right = True
+WHITE = 255, 255, 255 
 
 class Ship:
     def __init__(self,x, y):
@@ -80,7 +79,11 @@ class SpaceInvaders:
         self.velocity = 10
         self.lasers = []
         self.shootloop = 0
-        
+        self.lives = 3
+        self.score = 0
+        self.small_font = pygame.font.SysFont("Karmatic Arcade", 24)
+        self.medium_font = pygame.font.SysFont("Karmatic Arcade", 24)
+        self.large_font = pygame.font.SysFont("Karmatic Arcade", 48)
 
     def create_enemys(self):
         x = 153
@@ -124,7 +127,8 @@ class SpaceInvaders:
             enemy.draw()
         for laser in self.lasers:
             laser.draw()
-      
+        self.display_lives()
+        self.score_handler()
 
     def move_enemys(self):
         for enemy in self.enemys:
@@ -149,8 +153,31 @@ class SpaceInvaders:
 
             for enemy in self.enemys:
                 if laser.x > enemy.x and laser.x < enemy.x + enemy.w and laser.y > enemy.y and laser.y < enemy.y + enemy.h:
+                    if enemy.enemy_type == "enemy1":
+                        self.score += 30
+                    elif enemy.enemy_type == "enemy2":
+                        self.score += 20
+                    elif enemy.enemy_type == "enemy3":
+                        self.score += 10
+                    elif enemy.enemy_type == "mystry":
+                        self.score += 100 
                     self.lasers.pop(self.lasers.index(laser))
                     self.enemys.pop(self.enemys.index(enemy))
+    
+    def score_handler(self):
+        score_text = self.small_font.render("Score: " + str(self.score), True, WHITE)
+        self.win.blit(score_text,(10,10))
+
+    def display_lives(self):
+        if self.lives == 3:
+            self.win.blit(small_ship,(700,10))
+            self.win.blit(small_ship,(730,10))
+            self.win.blit(small_ship,(760,10))
+        elif self.lives == 2:
+            self.win.blit(small_ship,(700,10))
+            self.win.blit(small_ship,(730,10))
+        elif self.lives == 1:
+            self.win.blit(small_ship,(700,10))
 
     def main_loop(self):
         self.create_enemys()
@@ -165,7 +192,7 @@ class SpaceInvaders:
             self.ship.move()
             self.collision_check()
             self.redraw()
-
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -180,16 +207,14 @@ class SpaceInvaders:
             
             self.shootloop += 1
             if self.shootloop > 3:
-                self.shootloop = 0            
-            for laser in self.lasers:
+                self.shootloop = 0
 
+            for laser in self.lasers:
                 if laser.y > 0:
                     laser.y -= laser.velocity
                 else:
                     self.lasers.pop(self.lasers.index(laser))
-          
 
-               
             pygame.display.update()
 
 
@@ -197,3 +222,17 @@ game = SpaceInvaders()
 game.main_loop()
 
 
+#####todo######
+
+# draw lives = done
+# draw score = done
+# create collison detection if enenmies hit blocks 
+# create game over screen 
+# create pause screen 
+# create controls screen 
+# make enemies shoot
+# add mystery enemy 
+# create main menu
+# add sounds
+# sort out animation.. help! (ie when they are shot)
+# make exc file 
