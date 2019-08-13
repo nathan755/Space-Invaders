@@ -78,6 +78,7 @@ class Button:
         self.active = False
         self.clicked = False
         self.type_ = type_
+        self.hover = False
 
     def button_function(self):
         mouse = pygame.mouse.get_pos()
@@ -85,6 +86,7 @@ class Button:
 
         if mouse[0] > self.x and mouse[0] < self.x + self.w and mouse[1] > self.y and mouse[1] < self.y + self.h:
             self.active = True
+            self.hover = True
 
             if click[0] == 1:
                 self.clicked = True
@@ -93,6 +95,7 @@ class Button:
                 self.clicked = False
         else:
             self.active = False
+            self.hover = False
 
     def draw(self):
         if self.active:
@@ -262,6 +265,25 @@ class SpaceInvaders:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        for btn in self.buttons:
+               
+                            if btn.hover:
+                                if btn.type_ == "PLAY":
+                                    self.game_on = True
+                                    self.main_menu = False
+                                    self.controls_on = False
+                                elif btn.type_ == "CONTROLS":
+                                    self.main_menu = False
+                                    self.controls_on = True
+                                elif btn.type_ == "QUIT":
+                                    pygame.quit()
+                                    quit()
+                            
+                        
+
+
             self.win.blit(self.title,(300,50))
             self.win.blit(self.title2,(260,105))
             self.win.blit(self.hiscore_text,(100, 550))
@@ -275,24 +297,16 @@ class SpaceInvaders:
             self.win.blit(self.twenty_text,(470,300))
             self.win.blit(self.ten_text,(470,350))
             self.win.blit(self.mystry_text,(470,400))
-
             for btn in self.buttons:
                 btn.button_function()
                 btn.draw()
-                if btn.clicked:
-                    if btn.type_ == "PLAY":
-                        self.game_on = True
-                        self.main_menu = False
-                        self.controls_on = False
-                    elif btn.type_ == "CONTROLS":
-                        self.main_menu = False
-                        self.controls_on = True
+
+
+        
                         
 
                          
-                    elif btn.type_ == "QUIT":
-                        pygame.quit()
-                        quit()
+                   
                 
             if count % 2 == 0:
                 self.win.blit(self.credits_text,(500, 550))
@@ -301,29 +315,28 @@ class SpaceInvaders:
             pygame.display.update()
     
     def controls(self):
-        #back = Button(25,25,100,50, self.back_active_text, self.back_text, GREEN, "BACK")
-        print(" in controils menu")
-        print("main menu = "+ str(self.main_menu) )
-        print("controls_on = "+ str(self.controls_on))
+    
         while self.controls_on:
             pygame.Surface.fill(self.win,(BLACK))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-                #if event.type == pygame.MOUSEBUTTONDOWN:
-                    #if event.button == 1:
-                        #self.controls_on = False
-                        #self.main_menu = True
+                
+                if event.type == pygame.MOUSEBUTTONDOWN and self.back.hover:
+                    
+                    if event.button == 1:
+                        self.controls_on = False
+                        self.main_menu = True
+                        print("test")
+                        
 
             self.win.blit(self.shoot_text,(150,200))
             self.win.blit(self.left_text,(150,250))
             self.win.blit(self.right_text,(150,300))
             self.back.draw()
             self.back.button_function()
-            if self.back.clicked:
-                self.controls_on = False
-                self.main_menu = True
+            
             
                 
 
@@ -342,7 +355,7 @@ class SpaceInvaders:
         self.create_blocks(425,410,50,self.block3)
         self.create_blocks(600,410,50,self.block4)
         pygame.time.set_timer(self.move_event, 1000)
-        print("oops")
+        
         while True:
             self.menu()
             self.controls()
