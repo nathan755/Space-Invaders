@@ -248,7 +248,10 @@ class SpaceInvaders:
     def menu(self):
         pygame.time.set_timer(self.move_event, 500)
         count = 0
-        x = 0
+        print(" in main menu")
+        print("main menu = "+ str(self.main_menu) )
+        print("controls_on = "+ str(self.controls_on))
+        
 
         while self.main_menu:
             pygame.Surface.fill(self.win,(BLACK))
@@ -280,9 +283,11 @@ class SpaceInvaders:
                     if btn.type_ == "PLAY":
                         self.game_on = True
                         self.main_menu = False
+                        self.controls_on = False
                     elif btn.type_ == "CONTROLS":
                         self.main_menu = False
                         self.controls_on = True
+                        
 
                          
                     elif btn.type_ == "QUIT":
@@ -297,23 +302,32 @@ class SpaceInvaders:
     
     def controls(self):
         #back = Button(25,25,100,50, self.back_active_text, self.back_text, GREEN, "BACK")
+        print(" in controils menu")
+        print("main menu = "+ str(self.main_menu) )
+        print("controls_on = "+ str(self.controls_on))
         while self.controls_on:
             pygame.Surface.fill(self.win,(BLACK))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                #if event.type == pygame.MOUSEBUTTONDOWN:
+                    #if event.button == 1:
+                        #self.controls_on = False
+                        #self.main_menu = True
+
             self.win.blit(self.shoot_text,(150,200))
             self.win.blit(self.left_text,(150,250))
             self.win.blit(self.right_text,(150,300))
             self.back.draw()
             self.back.button_function()
             if self.back.clicked:
-                self.main_menu = True
-
                 self.controls_on = False
+                self.main_menu = True
+            
+                
 
-                print("foobar")
+                
               
 
                         
@@ -328,9 +342,12 @@ class SpaceInvaders:
         self.create_blocks(425,410,50,self.block3)
         self.create_blocks(600,410,50,self.block4)
         pygame.time.set_timer(self.move_event, 1000)
+        print("oops")
         while True:
-            self.controls()
             self.menu()
+            self.controls()
+
+            
                 
 
 
@@ -383,7 +400,7 @@ game.main_loop()
 # make enemies shoot
 # add mystery enemy 
 # create main menu = done
-# fix while loops that control the buttons , dunno wjat the fuck is going on... 
+# fix loops that control the buttons , dunno wjat the fuck is going on... 
 # add sounds
 # sort out animation.. help! (ie when they are shot)
 # make exc file 
